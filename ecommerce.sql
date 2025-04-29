@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2025 at 05:18 PM
+-- Generation Time: Apr 29, 2025 at 07:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -33,6 +33,15 @@ CREATE TABLE `cart` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`cart_id`, `customer_id`, `created_at`) VALUES
+(1, 1, '2025-04-01 02:00:00'),
+(2, 2, '2025-04-02 04:00:00'),
+(3, 3, '2025-04-03 07:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -46,6 +55,16 @@ CREATE TABLE `cartdetails` (
   `product_price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cartdetails`
+--
+
+INSERT INTO `cartdetails` (`cart_id`, `product_code`, `quantity`, `product_price`) VALUES
+(1, 'P001', 1, 300.00),
+(1, 'P002', 1, 50.00),
+(2, 'P002', 1, 50.00),
+(3, 'P003', 2, 40.00);
+
 -- --------------------------------------------------------
 
 --
@@ -56,6 +75,15 @@ CREATE TABLE `category` (
   `category_id` int(11) NOT NULL,
   `category` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `category`
+--
+
+INSERT INTO `category` (`category_id`, `category`) VALUES
+(1, 'Electronics'),
+(2, 'Fashion'),
+(3, 'Books');
 
 -- --------------------------------------------------------
 
@@ -73,6 +101,15 @@ CREATE TABLE `customer` (
   `point` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`customer_id`, `customer_name`, `phone_number`, `email`, `password`, `address`, `point`) VALUES
+(1, 'Alice', '123456789', 'alice@example.com', 'password', '123 Main St', 10),
+(2, 'Bob', '987654321', 'bob@example.com', 'password', '456 Elm St', 20),
+(3, 'Charlie', '111222333', 'charlie@example.com', 'password', '789 Oak St', 30);
+
 -- --------------------------------------------------------
 
 --
@@ -85,6 +122,18 @@ CREATE TABLE `pointshistory` (
   `amount` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pointshistory`
+--
+
+INSERT INTO `pointshistory` (`transaction_id`, `customer_id`, `amount`, `date`) VALUES
+(1, 1, 10, '2025-04-01 03:05:00'),
+(2, 2, 5, '2025-04-02 05:05:00'),
+(3, 1, 2, '2025-04-03 08:10:00'),
+(4, 3, 15, '2025-04-04 09:20:00'),
+(5, 2, 6, '2025-04-05 10:25:00'),
+(6, 3, 12, '2025-04-06 11:30:00');
 
 -- --------------------------------------------------------
 
@@ -101,6 +150,16 @@ CREATE TABLE `product` (
   `product_image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `product`
+--
+
+INSERT INTO `product` (`product_code`, `product_name`, `product_category_id`, `product_price`, `product_description`, `product_image`) VALUES
+('P001', 'Smartphone', 1, 300.00, 'Latest smartphone', NULL),
+('P002', 'Headphones', 1, 50.00, 'Noise-cancelling headphones', NULL),
+('P003', 'T-shirt', 2, 20.00, 'Cotton T-shirt', NULL),
+('P004', 'Novel', 3, 10.00, 'Bestselling novel', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -113,6 +172,21 @@ CREATE TABLE `transactiondetails` (
   `quantity` int(11) NOT NULL,
   `product_price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transactiondetails`
+--
+
+INSERT INTO `transactiondetails` (`order_id`, `product_code`, `quantity`, `product_price`) VALUES
+(1, 'P001', 1, 300.00),
+(1, 'P002', 1, 50.00),
+(2, 'P002', 1, 50.00),
+(3, 'P003', 1, 20.00),
+(4, 'P001', 1, 300.00),
+(4, 'P003', 3, 60.00),
+(5, 'P003', 1, 20.00),
+(5, 'P004', 1, 40.00),
+(6, 'P001', 1, 300.00);
 
 -- --------------------------------------------------------
 
@@ -128,6 +202,24 @@ CREATE TABLE `transactions` (
   `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `order_status` varchar(20) DEFAULT NULL CHECK (`order_status` in ('Pending','Paid','Shipped','Delivered'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`transaction_id`, `customer_id`, `recipient_name`, `total_amount`, `order_date`, `order_status`) VALUES
+(1, 1, 'Alice', 350.00, '2025-04-01 03:00:00', 'Delivered'),
+(2, 2, 'Bob', 50.00, '2025-04-02 05:00:00', 'Delivered'),
+(3, 1, 'Alice', 20.00, '2025-04-03 08:00:00', 'Delivered'),
+(4, 3, 'Charlie', 360.00, '2025-04-04 09:00:00', 'Delivered'),
+(5, 2, 'Bob', 60.00, '2025-04-05 10:00:00', 'Delivered'),
+(6, 3, 'Charlie', 300.00, '2025-04-06 11:00:00', 'Delivered'),
+(7, 1, 'Alice', 25.00, '2025-04-07 03:00:00', 'Delivered'),
+(8, 1, 'Alice', 30.00, '2025-04-08 04:00:00', 'Delivered'),
+(9, 2, 'Bob', 40.00, '2025-04-09 05:00:00', 'Delivered'),
+(10, 3, 'Charlie', 70.00, '2025-04-10 06:00:00', 'Delivered'),
+(11, 3, 'Charlie', 80.00, '2025-04-11 07:00:00', 'Delivered'),
+(12, 3, 'Charlie', 90.00, '2025-04-12 08:00:00', 'Delivered');
 
 --
 -- Indexes for dumped tables
