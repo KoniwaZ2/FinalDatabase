@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2025 at 07:06 PM
+-- Generation Time: May 03, 2025 at 05:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -38,9 +38,9 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `customer_id`, `created_at`) VALUES
-(1, 1, '2025-04-01 02:00:00'),
 (2, 2, '2025-04-02 04:00:00'),
-(3, 3, '2025-04-03 07:00:00');
+(3, 3, '2025-04-03 07:00:00'),
+(15, 1, '2025-05-02 01:47:46');
 
 -- --------------------------------------------------------
 
@@ -60,10 +60,10 @@ CREATE TABLE `cartdetails` (
 --
 
 INSERT INTO `cartdetails` (`cart_id`, `product_code`, `quantity`, `product_price`) VALUES
-(1, 'P001', 1, 300.00),
-(1, 'P002', 1, 50.00),
-(2, 'P002', 1, 50.00),
-(3, 'P003', 2, 40.00);
+(3, 'P004', 2, 313.00),
+(15, 'P001', 1, 300.00),
+(15, 'P002', 2, 50.00),
+(15, 'P003', 1, 20.00);
 
 -- --------------------------------------------------------
 
@@ -106,9 +106,11 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`customer_id`, `customer_name`, `phone_number`, `email`, `password`, `address`, `point`) VALUES
-(1, 'Alice', '123456789', 'alice@example.com', 'password', '123 Main St', 10),
+(1, '1', '1', '1', '1', '1', 0),
 (2, 'Bob', '987654321', 'bob@example.com', 'password', '456 Elm St', 20),
-(3, 'Charlie', '111222333', 'charlie@example.com', 'password', '789 Oak St', 30);
+(3, 'Charlie', '111222333', 'charlie@example.com', 'password', '789 Oak St', 30),
+(4, 'Alice', '123456789', 'alice@example.com', 'password', '123 Main St', 10),
+(5, 'John Doe', '1234567890', 'john@example.com', 'password123', '123 Main St', 0);
 
 -- --------------------------------------------------------
 
@@ -144,7 +146,7 @@ INSERT INTO `pointshistory` (`transaction_id`, `customer_id`, `amount`, `date`) 
 CREATE TABLE `product` (
   `product_code` varchar(10) NOT NULL,
   `product_name` varchar(100) NOT NULL,
-  `product_category_id` int(11) NOT NULL,
+  `product_category` int(11) NOT NULL,
   `product_price` decimal(10,2) NOT NULL,
   `product_description` text DEFAULT NULL,
   `product_image` varchar(255) DEFAULT NULL
@@ -154,7 +156,7 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`product_code`, `product_name`, `product_category_id`, `product_price`, `product_description`, `product_image`) VALUES
+INSERT INTO `product` (`product_code`, `product_name`, `product_category`, `product_price`, `product_description`, `product_image`) VALUES
 ('P001', 'Smartphone', 1, 300.00, 'Latest smartphone', NULL),
 ('P002', 'Headphones', 1, 50.00, 'Noise-cancelling headphones', NULL),
 ('P003', 'T-shirt', 2, 20.00, 'Cotton T-shirt', NULL),
@@ -167,17 +169,17 @@ INSERT INTO `product` (`product_code`, `product_name`, `product_category_id`, `p
 --
 
 CREATE TABLE `transactiondetails` (
-  `order_id` int(11) NOT NULL,
+  `transaction_id` int(11) NOT NULL,
   `product_code` varchar(10) NOT NULL,
   `quantity` int(11) NOT NULL,
-  `product_price` decimal(10,2) NOT NULL
+  `total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `transactiondetails`
 --
 
-INSERT INTO `transactiondetails` (`order_id`, `product_code`, `quantity`, `product_price`) VALUES
+INSERT INTO `transactiondetails` (`transaction_id`, `product_code`, `quantity`, `total`) VALUES
 (1, 'P001', 1, 300.00),
 (1, 'P002', 1, 50.00),
 (2, 'P002', 1, 50.00),
@@ -186,7 +188,8 @@ INSERT INTO `transactiondetails` (`order_id`, `product_code`, `quantity`, `produ
 (4, 'P003', 3, 60.00),
 (5, 'P003', 1, 20.00),
 (5, 'P004', 1, 40.00),
-(6, 'P001', 1, 300.00);
+(6, 'P001', 1, 300.00),
+(22, 'P003', 1, 20.00);
 
 -- --------------------------------------------------------
 
@@ -219,7 +222,8 @@ INSERT INTO `transactions` (`transaction_id`, `customer_id`, `recipient_name`, `
 (9, 2, 'Bob', 40.00, '2025-04-09 05:00:00', 'Delivered'),
 (10, 3, 'Charlie', 70.00, '2025-04-10 06:00:00', 'Delivered'),
 (11, 3, 'Charlie', 80.00, '2025-04-11 07:00:00', 'Delivered'),
-(12, 3, 'Charlie', 90.00, '2025-04-12 08:00:00', 'Delivered');
+(12, 3, 'Charlie', 90.00, '2025-04-12 08:00:00', 'Delivered'),
+(22, 1, '1', 20.00, '2025-05-01 17:51:50', 'Pending');
 
 --
 -- Indexes for dumped tables
@@ -230,7 +234,7 @@ INSERT INTO `transactions` (`transaction_id`, `customer_id`, `recipient_name`, `
 --
 ALTER TABLE `cart`
   ADD PRIMARY KEY (`cart_id`),
-  ADD UNIQUE KEY `customer_id` (`customer_id`);
+  ADD KEY `customer_id` (`customer_id`);
 
 --
 -- Indexes for table `cartdetails`
@@ -263,13 +267,13 @@ ALTER TABLE `pointshistory`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`product_code`),
-  ADD KEY `product_category_id` (`product_category_id`);
+  ADD KEY `product_category_id` (`product_category`);
 
 --
 -- Indexes for table `transactiondetails`
 --
 ALTER TABLE `transactiondetails`
-  ADD PRIMARY KEY (`order_id`,`product_code`),
+  ADD PRIMARY KEY (`transaction_id`,`product_code`),
   ADD KEY `product_code` (`product_code`);
 
 --
@@ -278,6 +282,34 @@ ALTER TABLE `transactiondetails`
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`transaction_id`),
   ADD KEY `customer_id` (`customer_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `category`
+--
+ALTER TABLE `category`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `transactions`
+--
+ALTER TABLE `transactions`
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Constraints for dumped tables
@@ -300,20 +332,20 @@ ALTER TABLE `cartdetails`
 -- Constraints for table `pointshistory`
 --
 ALTER TABLE `pointshistory`
-  ADD CONSTRAINT `pointshistory_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  ADD CONSTRAINT `pointshistory_ibfk_2` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`);
+  ADD CONSTRAINT `pointshistory_ibfk_2` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`),
+  ADD CONSTRAINT `pointshistory_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`);
 
 --
 -- Constraints for table `product`
 --
 ALTER TABLE `product`
-  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`product_category_id`) REFERENCES `category` (`category_id`);
+  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`product_category`) REFERENCES `category` (`category_id`);
 
 --
 -- Constraints for table `transactiondetails`
 --
 ALTER TABLE `transactiondetails`
-  ADD CONSTRAINT `transactiondetails_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `transactions` (`transaction_id`),
+  ADD CONSTRAINT `transactiondetails_ibfk_1` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`),
   ADD CONSTRAINT `transactiondetails_ibfk_2` FOREIGN KEY (`product_code`) REFERENCES `product` (`product_code`);
 
 --
